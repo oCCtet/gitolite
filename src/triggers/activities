@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# trigger program to log certain events for repos that are visible in the
+# gitweb. Usable in the POST_CREATE and ACCESS_2 triggers for logging repo
+# creation and push activities, respectively.
+
+LF_ACTIVITY="activities.log"
+LF_JSON="activities.json"
+
+# ----------------------------------------------------------------------
+# skip if called from the POST_CREATE trigger by the perms command as a
+# result of changing permissions on a wild repo
+[ "$1" = "POST_CREATE" ] && [ "$4" = "perms" ] && exit 0;
+
+# ----------------------------------------------------------------------
+# skip if the ACCESS_2 trigger denies access, indicated with a word DENIED
+# in the arg-6(result)
+[ "$1" = "ACCESS_2" ] && [ -z "`echo "$6" | grep -v DENIED`" ] && exit 0;
+
+# ----------------------------------------------------------------------
+# skip if the ACCESS_2 trigger runs on VREF, indicated by the arg-5(ref)
+# beginning with "VREF/"
+[ "$1" = "ACCESS_2" ] && [ -z "`echo "$5" | grep -v ^VREF/`" ] && exit 0;
+
+# ----------------------------------------------------------------------
+# only log activities for repos accessible by the gitweb special user
+[ -z "`(
+    gitolite access $2 gitweb R any | grep -v DENIED
+    gitolite git-config -r $2 gitweb\\.
+)`" ] && exit 0;
+
+ald=`gitolite query-rc ACTIVITIES_LOG_DIR`
+[ -z "$ald" ] && exit 0;
+
+nr=`gitolite query-rc ACTIVITIES_MAX_RECORDS`
+[ -z "$nr" ] && nr=20
+
+alf="$ald/$LF_ACTIVITY"
+ajf="$ald/$LF_JSON"
+ts=`date +%F.%T`
+
+# ----------------------------------------------------------------------
+# function to log activity into a plain log file, one record per line. Once
+# that is done, a configured number of the latest records are written as
+# json-formatted objects into a separate file.
+#
+# arg-1 : action ("fork", "create" or "push")
+# arg-2 : repo
+# arg-3 : user
+# arg-4 : ref ("master", "refs/tags/v1.0" ...)
+# arg-5 : oldSha
+# arg-6 : newSha
+a_log()
+{
+    msg="\"$ts\" : { \"action\" : \"$1\", "
+    msg="$msg \"repo\" : \"$2.git\", "
+    msg="$msg \"user\" : \"$3\", "
+    msg="$msg \"ref\" : \"$4\", "
+    msg="$msg \"oldSha\" : \"$5\", "
+    msg="$msg \"newSha\" : \"$6\" }"
+
+    echo "$msg" >>$alf 2>/dev/null
+
+    tail -n $nr $alf \
+	| sed '$! s/$/,/' \
+	| awk 'BEGIN { RS="#" }; { printf "{\n" $0 "}\n" }' >$ajf 2>/dev/null
+
+    exit 0;
+}
+
+if [ "$1" = "POST_CREATE" ]; then
+    [ "$4" = "fork" ] && a_log "fork" "$2" "$3";
+    [ -z "$3" ] && a_log "create" "$2" "admin";
+    a_log "create" "$2" "$3";
+fi
+
+[ "$1" = "ACCESS_2" ] && a_log "push" "$2" "$3" "${5#refs/heads/*}" "$7" "$8"
