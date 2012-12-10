@@ -37,7 +37,7 @@ nr=`gitolite query-rc ACTIVITIES_MAX_RECORDS`
 
 alf="$ald/$LF_ACTIVITY"
 ajf="$ald/$LF_JSON"
-ts=`date +%F.%T`
+ts=`date +%s`
 
 # ----------------------------------------------------------------------
 # function to log activity into a plain log file, one record per line. Once
