@@ -1,0 +1,33 @@
+README for Debian
+=================
+
+-- Valid for Ubuntu 12.04 LTS (Precise Pangolin) --
+
+jQuery javascript library
+-------------------------
+
+The required jQuery javascript library can be installed using the libjs-jquery
+package.
+
+Activities javascript library
+-----------------------------
+
+Create a symlink pointing to the location of the activities.js library so that
+the result is as follows:
+
+$ ll /usr/share/javascript/
+lrwxrwxrwx   1 root root   58 Dec  8 15:41 gl -> /opt/gitolite/contrib/activities/
+drwxr-xr-x   2 root root 4096 Dec  6 16:09 jquery/
+
+Nginx configuration
+-------------------
+
+To provide access to the javascript libraries, the following location
+block will suffice:
+
+  location /javascript {
+      alias /usr/share/javascript;
+      access_log off;
+  }
+
+ -- Sami Hartikainen <sami.a.hartikainen@gmail.com>  Fri, 07 Dec 2012 17:54:10 +0200

@@ -1,0 +1,70 @@
+INSTALL
+=======
+
+This document gives generic installation directives. If you're running
+a Debian/Ubuntu system, see README.Debian for some specific details.
+
+Prerequisites
+-------------
+
+The 'activities' feature for Gitolite requires the jQuery javascript
+library to be accessible via the url "/javascript/jquery/jquery.js".
+
+While no hard dependency to gitweb exists, these installation instructions
+assume that gitweb is used.
+
+Install method
+--------------
+
+If Gitolite is installed using the git repo, it is most convenient to
+set up gitweb and the webserver to find the files from the repo instead
+of manually copying them around.
+
+Gitolite configuration
+----------------------
+
+Modify the .gitolite.rc configuration file:
+
+ * enable activity logging by adding the 'activities' program into
+   the ACCESS_2 and POST_CREATE trigger hashes
+
+ * set ACTIVITIES_LOG_DIR option to contain a path to an existing log
+   directory which is writable by the 'gitolite user', and readable by
+   the webserver
+
+ * set ACTIVITIES_MAX_RECORDS to indicate the amount of log entries
+   to keep
+
+Gitweb configuration
+--------------------
+
+Configure the webpart.html to be loaded by gitweb.cgi via the $home_text
+gitweb configuration variable:
+
+  # html text to include at home page
+  $home_text = "/opt/gitolite/contrib/activities/webpart.html";
+
+Nginx configuration
+-------------------
+
+Set up a location that allows the javascript library activities.js to
+be accessed via url "/javascript/gl/activities.js". Same for the jQuery
+library.
+
+Set up a location for /activities that allows access to the activity logs.
+The location should be an alias to where the trigger script configuration
+variable ACTIVITIES_LOG_DIR points to. For example, assuming the RC file
+defines
+
+  %RC = (
+      # ...
+      ACTIVITIES_LOG_DIR    =>  '/var/log/gl',
+      # ...
+  );
+
+Then the nginx location directive could be something like:
+
+  location /activities {
+      alias /var/log/gl;
+      access_log off;
+  }
