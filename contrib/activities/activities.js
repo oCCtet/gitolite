@@ -5,47 +5,83 @@
 // it to the table with class 'gl_activities', refreshing the
 // web part periodically.
 
-function toTimestamp(timestamp)
+var aMinute    = 60000;     // 1000 * 60
+var twoMinutes = 120000;    // aMinute * 2
+var anHour     = 3600000;   // aMinute * 60
+var twoHours   = 7200000;   // anHour * 2
+var aDay       = 86400000;  // anHour * 24
+var twoDays    = 172800000; // aDay * 2
+var aWeek      = 604800000; // aDay * 7
+
+function toWhenString(timestamp)
 {
     var ts = new Date(1000 * timestamp);
-    return ts.toString();
+    var now = new Date();
+    var diff = now - ts;
+    var m, r;
+
+    if (diff < aMinute) {
+	r = "just now";
+    } else if (diff < twoMinutes) {
+	r = "a minute ago";
+    } else if (diff < anHour) {
+	m = diff.valueOf() / aMinute;
+	r = Math.floor(m) + " minutes ago";
+    } else if (diff < twoHours) {
+	r = "an hour ago";
+    } else if (diff < aDay) {
+	m = diff.valueOf() / anHour;
+	r = Math.floor(m) + " hours ago";
+    } else if (diff < twoDays) {
+	r = "a day ago";
+    } else if (diff < aWeek) {
+	m = diff.valueOf() / aDay;
+	r = Math.floor(m) + " days ago";
+    } else {
+	r = ts.toLocaleDateString();
+    }
+
+    return r;
 }
 
 function updateActivityPart(url)
 {
     $.getJSON(url, function(data) {
 	var items = [];
-	var ts, user, act, ext;
+	var ts, user, act, pt1, pt2, pt3;
 
 	$.each(data, function(timestamp, item) {
-	    ts   = '<td class="time">' + toTimestamp(timestamp) + '</td>';
+	    ts   = '<td class="time">' + toWhenString(timestamp) + '</td>';
 	    user = '<td class="user">' + item.user + '</td>';
-	    ext  = "";
 
 	    switch (item.action) {
 	    case "fork":
-		act = '<td class="act">forked a new repo <i>' + item.repo + '</i></td>';
+		act = '<td class="act">forked a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
 		break;
 	    case "create":
-		act = '<td class="act">created a new repo <i>' + item.repo + '</i></td>';
+		act = '<td class="act">created a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
 		break;
 	    case "push":
-		act = '<td class="act">pushed <tt>' + item.ref + '</tt> to <i>' + item.repo + '</i><br />';
-		ext = '<tt class="detail">oldSha: ' + item.oldSha + '<br />newSha: ' + item.newSha + '</tt></td>';
+		pt1 = '<td class="act">pushed <i class="ref">' + item.ref + '</i> to ';
+		pt2 = '<a href="/?p=' + item.repo + ';h=' + item.newSha + '">' + item.repo + '</a><br />';
+		pt3 = '<i class="sha">oldSha: ' + item.oldSha + '<br />newSha: ' + item.newSha + '</i></td>';
+		act = pt1.concat(pt2, pt3);
 		break;
 	    default:
 		act = '<td class="act">did something unexpected (<i>internal error</i>)</td>';
 	    }
 
-	    items.push('<tr>' + ts + user + act + ext + '</tr>');
+	    items.push("<tr>" + ts + user + act + "</tr>");
 	});
 
 	items.reverse();
 
-	$(".gl_title:hidden").css("display", "block");
+	$(".gl_title").filter(":hidden").css("display", "block");
 	$(".gl_activities").html(function() {
 	    return items.join('');
 	});
+
+	$(".gl_activities tr").filter(":even").addClass("dark");
     });
 }
 

@@ -1,0 +1,58 @@
+/* gl-activities stylesheet (C) 2012 Sami Hartikainen <sami.a.hartikainen@gmail.com> */
+
+.gl_title {
+    font-size : 110%;
+    font-weight : bold;
+    letter-spacing : 3px;
+}
+
+table.gl_activities  {
+    border-style : none;
+    border-collapse : collapse;
+}
+
+.gl_activities td.noact {
+    font-style : italic;
+    color : gray;
+    background-color : white;
+}
+
+.gl_activities tr.dark {
+    background-color : #f6f6f0;
+}
+
+.gl_activities td {
+    padding : 7px;
+}
+
+.gl_activities td.time {
+    font-size : 80%;
+    padding-top : 9px;
+}
+
+.gl_activities td.user {
+    font-style : italic;
+}
+
+.gl_activities a:link, .gl_activities a:visited {
+    text-decoration : none;
+    color : #0000cc;
+}
+
+.gl_activities a:hover, .gl_activities a:active {
+    text-decoration : none;
+    color : #880000;
+}
+
+.gl_activities i {
+    font-style : normal;
+}
+
+.gl_activities i.ref {
+    font-family : "Lucida Console", Monaco, monospace;
+}
+
+.gl_activities i.sha {
+    font-size: 60%;
+    color : gray;
+}

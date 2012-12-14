@@ -10,8 +10,7 @@ Prerequisites
 The 'activities' feature for Gitolite requires the jQuery javascript
 library to be accessible via the url "/javascript/jquery/jquery.js".
 
-While no hard dependency to gitweb exists, these installation instructions
-assume that gitweb is used.
+Dependency to gitweb exists only in the form of hyperlinks to repo/commit.
 
 Install method
 --------------
@@ -43,6 +42,14 @@ gitweb configuration variable:
 
   # html text to include at home page
   $home_text = "/opt/gitolite/contrib/activities/webpart.html";
+
+Configure the stylesheet via the $site_html_head_string variable:
+
+  # HTML snippet to be included in the <head> section of each page
+  $site_html_head_string = '<link rel="stylesheet" type="text/css" href="static/gl/activities.css"/>';
+
+Make sure webserver is able to serve the stylesheet file from the
+configured location.
 
 Nginx configuration
 -------------------
