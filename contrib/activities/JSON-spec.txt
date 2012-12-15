@@ -4,22 +4,15 @@ Activity log in JSON format contains a number of log entries. A log
 with one entry is formally defined as:
 
 {
-    "<timestamp, seconds since 1970-01-01T00:00:00.000Z>" : {
-        "action" : "<push | fork | create>",
-        "repo"   : "<path/to/repo.git>",
-        "user"   : "<username>",
-        "ref"    : "<branchname | refs/tags/tagname>",
-        "oldSha" : "<old SHA1, 40 hex chars>"
-        "newSha" : "<new SHA1, 40 hex chars>"
+    "<transaction id number>" : {
+        "timestamp" : "<seconds since 1970-01-01T00:00:00.000Z>",
+        "action"    : "<push | fork | create>",
+        "repo"      : "<path/to/repo.git>",
+        "user"      : "<username>",
+        "ref"       : "<branchname | refs/tags/tagname>",
+        "oldSha"    : "<old SHA1, 40 hex chars>"
+        "newSha"    : "<new SHA1, 40 hex chars>"
     }
 }
 
-An actual log document as an example:
-
-{
-"1355164530" : { "action" : "push",  "repo" : "baz/a7.git",  "user" : "u1",  "ref" : "master",  "oldSha" : "5d281e9127c0268a44b7b7de0d837322086cafc2",  "newSha" : "1e01d4e0a8110dcf37bb8d2687370ea7ec852764" },
-"1355164531" : { "action" : "push",  "repo" : "baz/a7.git",  "user" : "u1",  "ref" : "next",  "oldSha" : "3f8729d1b8a9340ae7e395b606671361beb95b06",  "newSha" : "999012e51aca9b3a7a37aec6d09fe7cdb86763fa" },
-"1355164575" : { "action" : "push",  "repo" : "baz/a7.git",  "user" : "u1",  "ref" : "refs/tags/v2.1.1",  "oldSha" : "0000000000000000000000000000000000000000",  "newSha" : "1e01d4e0a8110dcf37bb8d2687370ea7ec852764" },
-"1355164640" : { "action" : "fork",  "repo" : "baz/a3.git",  "user" : "u1",  "ref" : "",  "oldSha" : "",  "newSha" : "" },
-"1355164793" : { "action" : "create",  "repo" : "com.git",  "user" : "admin",  "ref" : "",  "oldSha" : "",  "newSha" : "" }
-}
+The sha and ref fields have non-empty values only for the action 'push'.

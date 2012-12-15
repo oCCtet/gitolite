@@ -50,8 +50,8 @@ function updateActivityPart(url)
 	var items = [];
 	var ts, user, act, pt1, pt2, pt3;
 
-	$.each(data, function(timestamp, item) {
-	    ts   = '<td class="time">' + toWhenString(timestamp) + '</td>';
+	$.each(data, function(tid, item) {
+	    ts   = '<td class="time">' + toWhenString(item.timestamp) + '</td>';
 	    user = '<td class="user">' + item.user + '</td>';
 
 	    switch (item.action) {
