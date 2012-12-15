@@ -1,26 +1,43 @@
 #!/bin/sh
 
-# trigger program to log certain events for repos that are visible in the
-# gitweb. Usable in the POST_CREATE and ACCESS_2 triggers for logging repo
-# creation and push activities, respectively.
-
-LF_ACTIVITY="activities.log"
-LF_JSON="activities.json"
+# trigger program to log repo creation and push activities for repos that
+# are visible in the gitweb. Designed to be included in the ACCESS_2, POST_GIT
+# and POST_CREATE triggers.
 
 # ----------------------------------------------------------------------
 # skip if called from the POST_CREATE trigger by the perms command as a
 # result of changing permissions on a wild repo
 [ "$1" = "POST_CREATE" ] && [ "$4" = "perms" ] && exit 0;
 
-# ----------------------------------------------------------------------
-# skip if the ACCESS_2 trigger denies access, indicated with a word DENIED
-# in the arg-6(result)
-[ "$1" = "ACCESS_2" ] && [ -z "`echo "$6" | grep -v DENIED`" ] && exit 0;
+ald=`gitolite query-rc ACTIVITIES_LOG_DIR`
+[ -z "$ald" ] && exit 0;
+
+alf="$ald/activities.log"
 
 # ----------------------------------------------------------------------
-# skip if the ACCESS_2 trigger runs on VREF, indicated by the arg-5(ref)
-# beginning with "VREF/"
-[ "$1" = "ACCESS_2" ] && [ -z "`echo "$5" | grep -v ^VREF/`" ] && exit 0;
+# if the ACCESS_2 trigger denies access - indicated with a word DENIED in
+# the arg-6(result) - stop here. If this was run on a VREF, erase a previously
+# logged push (allowed by non-VREF ACCESS_2 run) with the same transaction id.
+if [ "$1" = "ACCESS_2" ] && [ -z "`echo "$6" | grep -v DENIED`" ]; then
+    [ -z "`echo "$5" | grep -v ^VREF/`" ] && sed -i "/^\"$GL_TID\"/d" $alf
+    exit 0;
+fi
+
+# ----------------------------------------------------------------------
+# distill a JSON format log for the webpart. This is unoptimal as we don't
+# care if the log file has actually changed. Patches are welcome.
+if [ "$1" = "POST_GIT" ] && [ "$4" = "W" ]; then
+    nr=`gitolite query-rc ACTIVITIES_MAX_RECORDS`
+    [ -z "$nr" ] && nr=20
+
+    ajf="$ald/activities.json"
+
+    tail -n $nr $alf \
+	| sed '$! s/$/,/' \
+	| awk 'BEGIN { RS="#" }; { printf "{\n" $0 "}\n" }' >$ajf 2>/dev/null
+
+    exit 0;
+fi
 
 # ----------------------------------------------------------------------
 # only log activities for repos accessible by the gitweb special user
@@ -29,49 +46,32 @@ LF_JSON="activities.json"
     gitolite git-config -r $2 gitweb\\.
 )`" ] && exit 0;
 
-ald=`gitolite query-rc ACTIVITIES_LOG_DIR`
-[ -z "$ald" ] && exit 0;
-
-nr=`gitolite query-rc ACTIVITIES_MAX_RECORDS`
-[ -z "$nr" ] && nr=20
-
-alf="$ald/$LF_ACTIVITY"
-ajf="$ald/$LF_JSON"
 ts=`date +%s`
 
-# ----------------------------------------------------------------------
-# function to log activity into a plain log file, one record per line. Once
-# that is done, a configured number of the latest records are written as
-# json-formatted objects into a separate file.
-#
-# arg-1 : action ("fork", "create" or "push")
-# arg-2 : repo
-# arg-3 : user
-# arg-4 : ref ("master", "refs/tags/v1.0" ...)
-# arg-5 : oldSha
-# arg-6 : newSha
-a_log()
-{
-    msg="\"$ts\" : { \"action\" : \"$1\", "
-    msg="$msg \"repo\" : \"$2.git\", "
-    msg="$msg \"user\" : \"$3\", "
-    msg="$msg \"ref\" : \"$4\", "
-    msg="$msg \"oldSha\" : \"$5\", "
-    msg="$msg \"newSha\" : \"$6\" }"
-
-    echo "$msg" >>$alf 2>/dev/null
-
-    tail -n $nr $alf \
-	| sed '$! s/$/,/' \
-	| awk 'BEGIN { RS="#" }; { printf "{\n" $0 "}\n" }' >$ajf 2>/dev/null
-
-    exit 0;
-}
+# default arguments matching the ACCESS_2 trigger
+l_action="push"
+l_repo="$2"
+l_user="$3"
+l_ref="${5#refs/heads/*}"
+l_old="$7"
+l_new="$8"
 
 if [ "$1" = "POST_CREATE" ]; then
-    [ "$4" = "fork" ] && a_log "fork" "$2" "$3";
-    [ -z "$3" ] && a_log "create" "$2" "admin";
-    a_log "create" "$2" "$3";
+    l_action="create";
+    [ "$4" = "fork" ] && l_action="fork";
+    [ -z "$3" ] && l_user="admin";
 fi
 
-[ "$1" = "ACCESS_2" ] && a_log "push" "$2" "$3" "${5#refs/heads/*}" "$7" "$8"
+# ----------------------------------------------------------------------
+# log activity into a plain log file, one record per line. Each line is
+# 'almost' a JSON object to ease the distill procedure in POST_GIT.
+echo "\"$GL_TID\" : {" \
+    " \"timestamp\" : \"$ts\"," \
+    " \"action\"    : \"$l_action\"," \
+    " \"repo\"      : \"$l_repo.git\"," \
+    " \"user\"      : \"$l_user\"," \
+    " \"ref\"       : \"$l_ref\"," \
+    " \"oldSha\"    : \"$l_old\"," \
+    " \"newSha\"    : \"$l_new\" }" >>$alf 2>/dev/null
+
+exit 0;
