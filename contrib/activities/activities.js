@@ -68,7 +68,7 @@ function updateActivityPart(url)
 {
     $.getJSON(url, function(data) {
 	var items = [];
-	var ts, user, act, pt1, pt2, pt3;
+	var ts, user, act, pt1, pt2;
 
 	$.each(data, function(tid, item) {
 	    ts   = '<td class="time">' + toWhenString(item.timestamp) + '</td>';
@@ -84,13 +84,12 @@ function updateActivityPart(url)
 	    case "push":
 		if (isDelete(item.oldSha, item.newSha)) {
 		    pt1 = '<td class="act">deleted <i class="ref">' + toRefString(item.ref) + '</i> from ';
-		    pt2 = '<a href="/?p=' + item.repo + '">' + item.repo + '</a><br />';
+		    pt2 = '<a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
 		} else {
 		    pt1 = '<td class="act">pushed <i class="ref">' + toRefString(item.ref) + '</i> to ';
-		    pt2 = '<a href="/?p=' + item.repo + ';h=' + item.newSha + '">' + item.repo + '</a><br />';
+		    pt2 = '<a href="/?p=' + item.repo + ';h=' + item.newSha + '">' + item.repo + '</a></td>';
 		}
-		pt3 = '<i class="sha">oldSha: ' + item.oldSha + '<br />newSha: ' + item.newSha + '</i></td>';
-		act = pt1.concat(pt2, pt3);
+		act = pt1.concat(pt2);
 		break;
 	    default:
 		act = '<td class="act">did something unexpected (<i>internal error</i>)</td>';
