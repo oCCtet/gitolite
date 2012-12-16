@@ -9,6 +9,12 @@
 # result of changing permissions on a wild repo
 [ "$1" = "POST_CREATE" ] && [ "$4" = "perms" ] && exit 0;
 
+# if run on VREF and not denied (counterintuitively 'DENIED by fallthru'
+# indicates success for VREFs), stop here. Earlier run on non-VREF has
+# already logged the activity.
+[ "$1" = "ACCESS_2" ] &&  [ -z "`echo "$5" | grep -v ^VREF/`" ] \
+    &&  [ -z "`echo "$6" | grep -v 'DENIED by fallthru$'`" ] && exit 0;
+
 ald=`gitolite query-rc ACTIVITIES_LOG_DIR`
 [ -z "$ald" ] && exit 0;
 
@@ -44,13 +50,13 @@ format_json_log() {
 }
 
 # log distilled *after* all access checks done
-[ "$1" = "POST_GIT" ] && [ "$4" = "W" ] && format_json_log && exit 0;
+[ "$1" = "POST_GIT" ] && format_json_log && exit 0;
 
 # ----------------------------------------------------------------------
 # only log activities for repos accessible by the gitweb special user
 [ -z "`(
     gitolite access $2 gitweb R any | grep -v DENIED
-    gitolite git-config -r $2 gitweb\\.
+    gitolite git-config -r $2 gitweb\\\.
 )`" ] && exit 0;
 
 ts=`date +%s`
