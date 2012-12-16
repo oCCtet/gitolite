@@ -44,6 +44,26 @@ function toWhenString(timestamp)
     return r;
 }
 
+function toRefString(ref)
+{
+    var patt = new RegExp("^refs/tags/");
+    var r;
+
+    if (patt.test(ref) == true) {
+	r = "tag " + ref.replace("refs/tags/", "");
+    } else {
+	r = "branch " + ref;
+    }
+
+    return r;
+}
+
+function isDelete(oldSha, newSha)
+{
+    return (oldSha != "0000000000000000000000000000000000000000"
+	    && newSha == "0000000000000000000000000000000000000000");
+}
+
 function updateActivityPart(url)
 {
     $.getJSON(url, function(data) {
@@ -62,8 +82,13 @@ function updateActivityPart(url)
 		act = '<td class="act">created a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
 		break;
 	    case "push":
-		pt1 = '<td class="act">pushed <i class="ref">' + item.ref + '</i> to ';
-		pt2 = '<a href="/?p=' + item.repo + ';h=' + item.newSha + '">' + item.repo + '</a><br />';
+		if (isDelete(item.oldSha, item.newSha)) {
+		    pt1 = '<td class="act">deleted <i class="ref">' + toRefString(item.ref) + '</i> from ';
+		    pt2 = '<a href="/?p=' + item.repo + '">' + item.repo + '</a><br />';
+		} else {
+		    pt1 = '<td class="act">pushed <i class="ref">' + toRefString(item.ref) + '</i> to ';
+		    pt2 = '<a href="/?p=' + item.repo + ';h=' + item.newSha + '">' + item.repo + '</a><br />';
+		}
 		pt3 = '<i class="sha">oldSha: ' + item.oldSha + '<br />newSha: ' + item.newSha + '</i></td>';
 		act = pt1.concat(pt2, pt3);
 		break;
