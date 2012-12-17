@@ -57,6 +57,7 @@ format_json_log() {
 [ -z "`(
     gitolite access $2 gitweb R any | grep -v DENIED
     gitolite git-config -r $2 gitweb\\\.
+    gitolite git-config $2 gitolite-options.gitweb
 )`" ] && exit 0;
 
 ts=`date +%s`
