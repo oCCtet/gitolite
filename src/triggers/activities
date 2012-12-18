@@ -1,8 +1,12 @@
 #!/bin/sh
 
 # trigger program to log repo creation and push activities for repos that
-# are visible in the gitweb. Designed to be included in the ACCESS_2, POST_GIT
-# and POST_CREATE triggers.
+# are visible in the gitweb. To be included in the ACCESS_2 and POST_CREATE
+# triggers.
+
+# Set ACTIVITIES_LOG_DIR in the RC file to point to the activities log file
+# location, writable by gitolite and readable by the gitweb. The log file
+# does not need to exist.
 
 # ----------------------------------------------------------------------
 # skip if called from the POST_CREATE trigger by the perms command as a
@@ -30,29 +34,6 @@ if [ "$1" = "ACCESS_2" ] && [ -z "`echo "$6" | grep -v DENIED`" ]; then
 fi
 
 # ----------------------------------------------------------------------
-# distill a JSON format log for the webpart. This is unoptimal as we don't
-# care if the log file has actually changed. Patches are welcome.
-format_json_log() {
-    nr=`gitolite query-rc ACTIVITIES_MAX_RECORDS`
-    [ -z "$nr" ] && nr=20
-
-    ajf="$ald/activities.json"
-
-    # for the last nr entries, replace tid with line number (several entries
-    # may have the same tid which is illegal for json), then put the rest of
-    # json document bits in place (curly braces and commas)
-    tail -n $nr $alf \
-	| sed = | sed -e 'N; s/\n//' -e 's/^\([0-9]*\)"[0-9]*"/"\1"/' \
-	| sed '$! s/$/,/' \
-	| awk 'BEGIN { RS="#" }; { printf "{\n" $0 "}\n" }' >$ajf 2>/dev/null
-
-    return 0;
-}
-
-# log distilled *after* all access checks done
-[ "$1" = "POST_GIT" ] && format_json_log && exit 0;
-
-# ----------------------------------------------------------------------
 # only log activities for repos accessible by the gitweb special user
 [ -z "`(
     gitolite access $2 gitweb R any | grep -v DENIED
@@ -78,7 +59,7 @@ fi
 
 # ----------------------------------------------------------------------
 # log activity into a plain log file, one record per line. Each line is
-# 'almost' a JSON object to ease the distill procedure.
+# 'almost' a JSON object to ease later processing.
 echo "\"$GL_TID\" : {" \
     " \"timestamp\" : \"$ts\"," \
     " \"action\"    : \"$l_action\"," \
@@ -87,9 +68,5 @@ echo "\"$GL_TID\" : {" \
     " \"ref\"       : \"$l_ref\"," \
     " \"oldSha\"    : \"$l_old\"," \
     " \"newSha\"    : \"$l_new\" }" >>$alf 2>/dev/null
-
-# the fork command does not run POST_GIT trigger, so we must distill
-# json log right here
-[ "$1" = "POST_CREATE" ] && [ "$4" = "fork" ] && format_json_log;
 
 exit 0;
