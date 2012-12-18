@@ -9,8 +9,8 @@ jQuery javascript library
 The required jQuery javascript library can be installed using the libjs-jquery
 package.
 
-Activities javascript & stylesheet
-----------------------------------
+Activities javascript, stylesheet and CGI program
+-------------------------------------------------
 
 Create a symlink pointing to the location of the activities.js library so that
 the result is as follows:
@@ -25,8 +25,29 @@ $ ll /usr/share/gitweb/static/
 -rw-r--r-- 1 root root 10397 Apr 11  2012 gitweb.css
 lrwxrwxrwx 1 root root    58 Dec 12 22:21 gl -> /opt/gitolite/contrib/activities/
 
+And for the CGI program:
+
+$ ll /usr/lib/cgi-bin/
+lrwxrwxrwx   1 root root    73 Dec 17 19:11 activities.cgi -> /opt/gitolite/contrib/activities/activities.cgi*
+lrwxrwxrwx   1 root root    29 Apr 11  2012 gitweb.cgi -> ../../share/gitweb/gitweb.cgi*
+
 Nginx configuration
 -------------------
+
+Assuming gitweb is configured as follows:
+
+    include /usr/share/doc/fcgiwrap/examples/nginx.conf;
+
+    location / {
+        index /cgi-bin/gitweb.cgi;
+    }
+
+Then static files, like the stylesheet, should be configured thusly:
+
+  location /static {
+      alias /usr/share/gitweb/static;
+      access_log off;
+  }
 
 To provide access to the javascript libraries, the following location
 block will suffice:
@@ -36,11 +57,10 @@ block will suffice:
       access_log off;
   }
 
-Similarly for the static files like the stylesheet:
+Logrotate
+---------
 
-  location /static {
-      alias /usr/share/gitweb/static;
-      access_log off;
-  }
+Copy the gl-activities.logrotate to /etc/logrotate.d/gl-activities
+and modify the log file path to match yours.
 
  -- Sami Hartikainen <sami.a.hartikainen@gmail.com>  Fri, 07 Dec 2012 17:54:10 +0200

@@ -64,9 +64,9 @@ function isDelete(oldSha, newSha)
 	    && newSha == "0000000000000000000000000000000000000000");
 }
 
-function updateActivityPart(url)
+function updateActivityPart(url, entryCount)
 {
-    $.getJSON(url, function(data) {
+    $.getJSON(url, { n : entryCount }, function(data) {
 	var items = [];
 	var ts, user, act, pt1, pt2;
 
@@ -111,11 +111,12 @@ function updateActivityPart(url)
 
 function activities(interval)
 {
-    var url = "/activities/activities.json";
+    var url = "/cgi-bin/activities.cgi";
+    var cnt = 20;
 
     // initial web part update
-    updateActivityPart(url);
+    updateActivityPart(url, cnt);
 
     // then refresh every 'interval' seconds
-    setInterval(function(){ updateActivityPart(url) }, interval * 1000);
+    setInterval(function(){ updateActivityPart(url, cnt) }, interval * 1000);
 }

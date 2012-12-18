@@ -8,8 +8,8 @@ It consists of two parts:
  * Gitolite trigger for logging actions (repo creations and pushes)
    taken on repositories that are visible for gitweb
 
- * Web page HTML snippet and javascript library to read the
-   log and render it on a web page (most recent actions first)
+ * Web page HTML snippet, CGI program and javascript library to read
+   the log and render it on a web page (most recent actions first)
 
 This was done because the "last change" column in gitweb is not quite
 enough; it does not tell _what_ the last action was, or _who_ did it.

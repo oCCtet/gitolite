@@ -2,7 +2,7 @@ INSTALL
 =======
 
 This document gives generic installation directives. If you're running
-a Debian/Ubuntu system, see README.Debian for some specific details.
+a Debian/Ubuntu system, see README.Debian for additional details.
 
 Prerequisites
 -------------
@@ -25,14 +25,21 @@ Gitolite configuration
 Modify the .gitolite.rc configuration file:
 
  * enable activity logging by adding the 'activities' program into
-   the ACCESS_2, POST_GIT and POST_CREATE trigger hashes
+   the ACCESS_2 and POST_CREATE trigger hashes
 
  * set ACTIVITIES_LOG_DIR option to contain a path to an existing log
    directory which is writable by the 'gitolite user', and readable by
    the webserver
 
- * set ACTIVITIES_MAX_RECORDS to indicate the amount of log entries
-   to keep
+CGI program configuration
+-------------------------
+
+The activities.cgi supports an optional configuration file
+/etc/gitolite-activities.conf with the following options:
+
+    # activities log file; sync the path with gitolite RC
+    # option ACTIVITIES_LOG_DIR
+    LOG_FILE=/var/log/gl/activities.log
 
 Gitweb configuration
 --------------------
@@ -58,6 +65,9 @@ Set up a location that allows the javascript library activities.js to
 be accessed via url "/javascript/gl/activities.js". Same for the jQuery
 library.
 
+Set up a location that allows the CGI program to be run via url
+"/cgin-bin/activities.cgi".
+
 Set up a location for /activities that allows access to the activity logs.
 The location should be an alias to where the trigger script configuration
 variable ACTIVITIES_LOG_DIR points to. For example, assuming the RC file
@@ -75,3 +85,10 @@ Then the nginx location directive could be something like:
       alias /var/log/gl;
       access_log off;
   }
+
+Logrotate
+---------
+
+In order not to fill up the disk with log information, the sample
+file gl-activities.logrotate can be used to set up a logrotate task
+for the activities log.

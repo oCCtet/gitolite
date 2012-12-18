@@ -4,7 +4,7 @@ Activity log in JSON format contains a number of log entries. A log
 with one entry is formally defined as:
 
 {
-    "<transaction id number>" : {
+    "<id number>" : {
         "timestamp" : "<seconds since 1970-01-01T00:00:00.000Z>",
         "action"    : "<push | fork | create>",
         "repo"      : "<path/to/repo.git>",

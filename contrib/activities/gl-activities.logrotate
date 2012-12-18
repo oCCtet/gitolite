@@ -1,0 +1,10 @@
+# /etc/logrotate.d/gl-activities
+
+/var/log/gl/*.log {
+    rotate 2
+    size 2M
+    missingok
+    nocreate
+    delaycompress
+    notifempty
+}
