@@ -2,16 +2,26 @@
 // uses the jQuery javascript library
 
 // Get the activities JSON document from the server and render
-// it to the table with class 'gl_activities', refreshing the
-// web part periodically.
+// it to the table with id 'gl-activities-listing', refreshing
+// the web part periodically.
 
-var aMinute    = 60000;     // 1000 * 60
-var twoMinutes = 120000;    // aMinute * 2
-var anHour     = 3600000;   // aMinute * 60
-var twoHours   = 7200000;   // anHour * 2
-var aDay       = 86400000;  // anHour * 24
-var twoDays    = 172800000; // aDay * 2
-var aWeek      = 604800000; // aDay * 7
+var aMinute    = 60000;      // 1000 * 60
+var twoMinutes = 120000;     // aMinute * 2
+var anHour     = 3600000;    // aMinute * 60
+var twoHours   = 7200000;    // anHour * 2
+var aDay       = 86400000;   // anHour * 24
+var twoDays    = 172800000;  // aDay * 2
+var aWeek      = 604800000;  // aDay * 7
+var twoWeeks   = 1209600000; // aWeek * 2
+
+var condensed     = 7;
+var expanded      = 100;
+var activityCount = condensed;
+
+var url = "/cgi-bin/activities.cgi";
+
+var interval   = 10000;  // ten seconds (in milliseconds)
+var intervalId;          // undefined to begin with
 
 function toWhenString(timestamp)
 {
@@ -24,17 +34,13 @@ function toWhenString(timestamp)
 	r = "just now";
     } else if (diff < twoMinutes) {
 	r = "a minute ago";
-    } else if (diff < anHour) {
+    } else if (diff < twoHours) {
 	m = diff.valueOf() / aMinute;
 	r = Math.floor(m) + " minutes ago";
-    } else if (diff < twoHours) {
-	r = "an hour ago";
-    } else if (diff < aDay) {
+    } else if (diff < twoDays) {
 	m = diff.valueOf() / anHour;
 	r = Math.floor(m) + " hours ago";
-    } else if (diff < twoDays) {
-	r = "a day ago";
-    } else if (diff < aWeek) {
+    } else if (diff < twoWeeks) {
 	m = diff.valueOf() / aDay;
 	r = Math.floor(m) + " days ago";
     } else {
@@ -64,35 +70,35 @@ function isDelete(oldSha, newSha)
 	    && newSha == "0000000000000000000000000000000000000000");
 }
 
-function updateActivityPart(url, entryCount)
+function updateActivity()
 {
-    $.getJSON(url, { n : entryCount }, function(data) {
+    $.getJSON(url, { n : activityCount }, function(data) {
 	var items = [];
 	var ts, user, act, pt1, pt2;
 
 	$.each(data, function(tid, item) {
-	    ts   = '<td class="time">' + toWhenString(item.timestamp) + '</td>';
-	    user = '<td class="user">' + item.user + '</td>';
+	    ts   = '<td class="gl-time">' + toWhenString(item.timestamp) + '</td>';
+	    user = '<td class="gl-user">' + item.user + '</td>';
 
 	    switch (item.action) {
 	    case "fork":
-		act = '<td class="act">forked a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
+		act = '<td>forked a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
 		break;
 	    case "create":
-		act = '<td class="act">created a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
+		act = '<td>created a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
 		break;
 	    case "push":
 		if (isDelete(item.oldSha, item.newSha)) {
-		    pt1 = '<td class="act">deleted <i class="ref">' + toRefString(item.ref) + '</i> from ';
+		    pt1 = '<td>deleted <i class="gl-ref">' + toRefString(item.ref) + '</i> from ';
 		    pt2 = '<a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
 		} else {
-		    pt1 = '<td class="act">pushed <i class="ref">' + toRefString(item.ref) + '</i> to ';
+		    pt1 = '<td>pushed <i class="gl-ref">' + toRefString(item.ref) + '</i> to ';
 		    pt2 = '<a href="/?p=' + item.repo + ';h=' + item.newSha + '">' + item.repo + '</a></td>';
 		}
 		act = pt1.concat(pt2);
 		break;
 	    default:
-		act = '<td class="act">did something unexpected (<i>internal error</i>)</td>';
+		act = '<td class="gl-act">did something unexpected (<i>internal error</i>)</td>';
 	    }
 
 	    items.push("<tr>" + ts + user + act + "</tr>");
@@ -100,23 +106,54 @@ function updateActivityPart(url, entryCount)
 
 	items.reverse();
 
-	$(".gl_title").filter(":hidden").css("display", "block");
-	$(".gl_activities").html(function() {
+	$("#gl-title").filter(":hidden").css("display", "block");
+	$("#gl-showall").filter(":hidden").css("display", "block");
+	$("#gl-activities-listing").html(function() {
 	    return items.join('');
 	});
 
-	$(".gl_activities tr").filter(":even").addClass("dark");
+	$("#gl-activities tr").filter(":even").addClass("gl-dark");
     });
 }
 
-function activities(interval)
+function toggleActivityCount()
 {
-    var url = "/cgi-bin/activities.cgi";
-    var cnt = 20;
+    activityCount = (activityCount === condensed ? expanded : condensed);
 
-    // initial web part update
-    updateActivityPart(url, cnt);
+    switch (activityCount) {
+    case condensed:
+	$("#gl-showall").text("more").attr("title", "show " + expanded + " most recent events");
+	break;
+    default:
+	$("#gl-showall").text("less").attr("title", "show " + condensed + " most recent events");
+    }
+}
 
-    // then refresh every 'interval' seconds
-    setInterval(function(){ updateActivityPart(url, cnt) }, interval * 1000);
+function stopActivityUpdate()
+{
+    if (intervalId !== undefined) {
+	clearInterval(intervalId);
+    }
+}
+
+function startActivityUpdate()
+{
+    // do initial web part update, then refresh
+    // every 'interval' milliseconds
+    updateActivity();
+    intervalId = setInterval(updateActivity, interval);
+}
+
+function activities()
+{
+    $("#gl-showall").click(function(event) {
+	event.preventDefault();
+	stopActivityUpdate();
+	toggleActivityCount();
+	startActivityUpdate();
+    });
+
+    if (intervalId === undefined) {
+	startActivityUpdate();
+    }
 }

@@ -10,7 +10,7 @@ Prerequisites
 The 'activities' feature for Gitolite requires the jQuery javascript
 library to be accessible via the url "/javascript/jquery/jquery.js".
 
-Dependency to gitweb exists only in the form of hyperlinks to repo/commit.
+The web part is designed to be embedded into gitweb project index page.
 
 Install method
 --------------

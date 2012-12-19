@@ -2,9 +2,12 @@
 <script type="text/javascript" src="/javascript/jquery/jquery.js"></script>
 <script type="text/javascript" src="/javascript/gl/activities.js"></script>
 <script type="text/javascript">
-$(document).ready(activities(10));
+$(document).ready(activities);
 </script>
-<p class="gl_title" style="display:none;">Activities</p>
-<table class="gl_activities">
-<tr><td class="noact">No activities to show</td></tr>
+<div id="gl-activities">
+<p id="gl-title">Activities</p>
+<table id="gl-activities-listing">
+<tr><td class="gl-noact">No activities to show</td></tr>
 </table>
+<a id="gl-showall" class="rss_logo" title="show 100 most recent events" href="toggle100">more</a>
+</div>

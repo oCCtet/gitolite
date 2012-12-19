@@ -1,58 +1,63 @@
 /* gl-activities stylesheet (C) 2012 Sami Hartikainen <sami.a.hartikainen@gmail.com> */
 
-.gl_title {
-    font-size : 110%;
-    font-weight : bold;
-    letter-spacing : 3px;
+#gl-activities {
+    /* to make 'float' elements stay within block */
+    overflow : hidden;
+    height : auto;
 }
 
-table.gl_activities  {
+#gl-title {
+    display : none;
+    font-size : 100%;
+    font-weight : bold;
+    margin-top : 0px;
+    letter-spacing : 2px;
+}
+
+#gl-activities-listing {
     border-style : none;
     border-collapse : collapse;
 }
 
-.gl_activities td.noact {
+.gl-noact {
     font-style : italic;
     color : gray;
     background-color : white;
 }
 
-.gl_activities tr.dark {
+#gl-showall {
+    display : none;
+    /* class is set to 'rss_logo' which is defined in gitweb.css */
+}
+
+.gl-dark {
     background-color : #f6f6f0;
 }
 
-.gl_activities td {
+#gl-activities-listing td {
     padding : 7px;
 }
 
-.gl_activities td.time {
+.gl-time {
     font-size : 80%;
     padding-top : 9px;
 }
 
-.gl_activities td.user {
+.gl-user {
     font-style : italic;
 }
 
-.gl_activities a:link, .gl_activities a:visited {
+.gl-ref {
+    font-family : "Lucida Console", Monaco, monospace;
+    font-style : normal;
+}
+
+#gl-activities-listing a:link, #gl-activities-listing a:visited {
     text-decoration : none;
     color : #0000cc;
 }
 
-.gl_activities a:hover, .gl_activities a:active {
+#gl-activities-listing a:hover, #gl-activities-listing a:active {
     text-decoration : none;
     color : #880000;
-}
-
-.gl_activities i {
-    font-style : normal;
-}
-
-.gl_activities i.ref {
-    font-family : "Lucida Console", Monaco, monospace;
-}
-
-.gl_activities i.sha {
-    font-size: 60%;
-    color : gray;
 }
