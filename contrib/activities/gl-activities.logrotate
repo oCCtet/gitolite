@@ -1,10 +1,14 @@
 # /etc/logrotate.d/gl-activities
 
+# modify the log file matching rule to match your setup
+
 /var/log/gl/*.log {
     rotate 2
-    size 2M
+    minsize 2M
+    monthly
     missingok
     nocreate
+    compress
     delaycompress
     notifempty
 }

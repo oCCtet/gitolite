@@ -17,29 +17,26 @@ Install method
 
 If Gitolite is installed using the git repo, it is most convenient to
 set up gitweb and the webserver to find the files from the repo instead
-of manually copying them around.
+of manually copying them around. Utilize symlinks where feasible.
 
 Gitolite configuration
 ----------------------
 
-Modify the .gitolite.rc configuration file:
+Modify the $GL_BASE_DIR/.gitolite.rc configuration file:
 
  * enable activity logging by adding the 'activities' program into
    the ACCESS_2 and POST_CREATE trigger hashes
 
- * set ACTIVITIES_LOG_DIR option to contain a path to an existing log
-   directory which is writable by the 'gitolite user', and readable by
-   the webserver
+ * set ACTIVITIES_LOG_FILE option to contain a path to the log file;
+   the directory must exist and be writable by the 'gitolite user',
+   and readable by the webserver
 
 CGI program configuration
 -------------------------
 
-The activities.cgi supports an optional configuration file
-/etc/gitolite-activities.conf with the following options:
-
-    # activities log file; sync the path with gitolite RC
-    # option ACTIVITIES_LOG_DIR
-    LOG_FILE=/var/log/gl/activities.log
+Synchronize the log file path option LOG_FILE in the CGI program's
+configuration file /etc/gitolite-activities.conf to match that of
+gitolite's ACTIVITIES_LOG_FILE option.
 
 Gitweb configuration
 --------------------
@@ -67,24 +64,6 @@ library.
 
 Set up a location that allows the CGI program to be run via url
 "/cgin-bin/activities.cgi".
-
-Set up a location for /activities that allows access to the activity logs.
-The location should be an alias to where the trigger script configuration
-variable ACTIVITIES_LOG_DIR points to. For example, assuming the RC file
-defines
-
-  %RC = (
-      # ...
-      ACTIVITIES_LOG_DIR    =>  '/var/log/gl',
-      # ...
-  );
-
-Then the nginx location directive could be something like:
-
-  location /activities {
-      alias /var/log/gl;
-      access_log off;
-  }
 
 Logrotate
 ---------

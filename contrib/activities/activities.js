@@ -14,13 +14,17 @@ var twoDays    = 172800000;  // aDay * 2
 var aWeek      = 604800000;  // aDay * 7
 var twoWeeks   = 1209600000; // aWeek * 2
 
+var url = "/cgi-bin/activities.cgi";
+
+// The CGI program may override the min/max/interval
+// values when requested for the options, so these
+// are only fallbacks.
+
 var condensed     = 7;
 var expanded      = 100;
 var activityCount = condensed;
 
-var url = "/cgi-bin/activities.cgi";
-
-var interval   = 10000;  // ten seconds (in milliseconds)
+var interval   = 10000;  // in milliseconds
 var intervalId;          // undefined to begin with
 
 function toWhenString(timestamp)
@@ -70,9 +74,30 @@ function isDelete(oldSha, newSha)
 	    && newSha == "0000000000000000000000000000000000000000");
 }
 
+function getOptions()
+{
+    $.getJSON(url, { a : "opt" }, function(data) {
+	$.each(data, function(key, val) {
+	    switch(key) {
+	    case "min":
+		condensed = val;
+		break;
+	    case "max":
+		expanded = val;
+		break;
+	    case "interval":
+		interval = val;
+		break;
+	    }
+	});
+
+	activityCount = condensed;  // reset to start small
+    });
+}
+
 function updateActivity()
 {
-    $.getJSON(url, { n : activityCount }, function(data) {
+    $.getJSON(url, { a : "log", n : activityCount }, function(data) {
 	var items = [];
 	var ts, user, act, pt1, pt2;
 
@@ -120,12 +145,10 @@ function toggleActivityCount()
 {
     activityCount = (activityCount === condensed ? expanded : condensed);
 
-    switch (activityCount) {
-    case condensed:
-	$("#gl-showall").text("more").attr("title", "show " + expanded + " most recent events");
-	break;
-    default:
-	$("#gl-showall").text("less").attr("title", "show " + condensed + " most recent events");
+    if (activityCount == condensed) {
+	$("#gl-showall").text("more").attr("title", "show more events");
+    } else {
+	$("#gl-showall").text("less").attr("title", "show less events");
     }
 }
 
@@ -154,6 +177,7 @@ function activities()
     });
 
     if (intervalId === undefined) {
+	getOptions();
 	startActivityUpdate();
     }
 }

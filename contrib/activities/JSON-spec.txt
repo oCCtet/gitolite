@@ -16,3 +16,11 @@ with one entry is formally defined as:
 }
 
 The sha and ref fields have non-empty values only for the action 'push'.
+
+The option response definition:
+
+{
+    "min"      : "<minimum number of log entries to show>",
+    "max"      : "<maximum number of log entries to show>",
+    "interval" : "<web part refresh interval in milliseconds>"
+}
