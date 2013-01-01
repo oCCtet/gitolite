@@ -16,8 +16,8 @@
 # if run on VREF and not denied (counterintuitively 'DENIED by fallthru'
 # indicates success for VREFs), stop here. Earlier run on non-VREF has
 # already logged the activity.
-[ "$1" = "ACCESS_2" ] &&  [ -z "`echo "$5" | grep -v ^VREF/`" ] \
-    &&  [ -z "`echo "$6" | grep -v 'DENIED by fallthru$'`" ] && exit 0;
+[ "$1" = "ACCESS_2" ] && [ -z "`echo "$5" | grep -v ^VREF/`" ] \
+    && [ -z "`echo "$6" | grep -v 'DENIED by fallthru$'`" ] && exit 0;
 
 alf=`gitolite query-rc ACTIVITIES_LOG_FILE`
 [ -z "$alf" ] && exit 0;

@@ -2,7 +2,7 @@
 
 # modify the log file matching rule to match your setup
 
-/var/log/gl/*.log {
+/var/log/gitolite/*.log {
     rotate 2
     minsize 2M
     monthly

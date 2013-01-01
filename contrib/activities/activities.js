@@ -54,24 +54,34 @@ function toWhenString(timestamp)
     return r;
 }
 
-function toRefString(ref)
+function toRefString(ref, minimal)
 {
     var patt = new RegExp("^refs/tags/");
-    var r;
+    var r, pre;
 
     if (patt.test(ref) == true) {
-	r = "tag " + ref.replace("refs/tags/", "");
+	pre = (minimal ? "" : "tag ");
+	r = pre + ref.replace("refs/tags/", "");
     } else {
-	r = "branch " + ref;
+	pre = (minimal ? "" : "branch ");
+	r = pre + ref;
     }
 
     return r;
 }
 
-function isDelete(oldSha, newSha)
+function pushKind(oldSha, newSha)
 {
-    return (oldSha != "0000000000000000000000000000000000000000"
-	    && newSha == "0000000000000000000000000000000000000000");
+    var noSha = "0000000000000000000000000000000000000000";
+    var r = 0;  // by default change ref
+
+    if (oldSha == noSha	&& newSha != noSha) {
+	r = 1;  // create ref
+    } else if (oldSha != noSha && newSha == noSha) {
+	r = 2;  // delete ref
+    }
+
+    return r;
 }
 
 function getOptions()
@@ -102,31 +112,37 @@ function updateActivity()
 	var ts, user, act, pt1, pt2;
 
 	$.each(data, function(tid, item) {
-	    ts   = '<td class="gl-time">' + toWhenString(item.timestamp) + '</td>';
-	    user = '<td class="gl-user">' + item.user + '</td>';
+	    ts   = ' <i class="gl-time">' + toWhenString(item.timestamp) + '</i>';
+	    user = '<i class="gl-user">' + item.user + '</i> ';
 
 	    switch (item.action) {
 	    case "fork":
-		act = '<td>forked a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
+		act = 'forked a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a>';
 		break;
 	    case "create":
-		act = '<td>created a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
+		act = 'created a new repo <a href="/?p=' + item.repo + '">' + item.repo + '</a>';
 		break;
 	    case "push":
-		if (isDelete(item.oldSha, item.newSha)) {
-		    pt1 = '<td>deleted <i class="gl-ref">' + toRefString(item.ref) + '</i> from ';
-		    pt2 = '<a href="/?p=' + item.repo + '">' + item.repo + '</a></td>';
-		} else {
-		    pt1 = '<td>pushed <i class="gl-ref">' + toRefString(item.ref) + '</i> to ';
-		    pt2 = '<a href="/?p=' + item.repo + ';h=' + item.newSha + '">' + item.repo + '</a></td>';
+		switch(pushKind(item.oldSha, item.newSha)) {
+		case 1:
+		    pt1 = 'created ' + toRefString(item.ref, false) + ' at ';
+		    pt2 = '<a href="/?p=' + item.repo + ';h=' + item.newSha + '">' + item.repo + '</a>';
+		    break;
+		case 2:
+		    pt1 = 'deleted ' + toRefString(item.ref, false) + ' at ';
+		    pt2 = '<a href="/?p=' + item.repo + '">' + item.repo + '</a>';
+		    break;
+		default:
+		    pt1 = 'pushed to ' + toRefString(item.ref, true) + ' at ';
+		    pt2 = '<a href="/?p=' + item.repo + ';h=' + item.newSha + '">' + item.repo + '</a>';
 		}
 		act = pt1.concat(pt2);
 		break;
 	    default:
-		act = '<td class="gl-act">did something unexpected (<i>internal error</i>)</td>';
+		act = 'did something unexpected (<i>internal error</i>)';
 	    }
 
-	    items.push("<tr>" + ts + user + act + "</tr>");
+	    items.push("<tr><td>" + user + act + ts + "</td></tr>");
 	});
 
 	items.reverse();

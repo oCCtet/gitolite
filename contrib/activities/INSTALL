@@ -8,7 +8,7 @@ Prerequisites
 -------------
 
 The 'activities' feature for Gitolite requires the jQuery javascript
-library to be accessible via the url "/javascript/jquery/jquery.js".
+library to be accessible via the url "/javascript/jquery/jquery.min.js".
 
 The web part is designed to be embedded into gitweb project index page.
 
@@ -22,7 +22,7 @@ of manually copying them around. Utilize symlinks where feasible.
 Gitolite configuration
 ----------------------
 
-Modify the $GL_BASE_DIR/.gitolite.rc configuration file:
+Modify the ~/.gitolite.rc configuration file:
 
  * enable activity logging by adding the 'activities' program into
    the ACCESS_2 and POST_CREATE trigger hashes
@@ -50,7 +50,7 @@ gitweb configuration variable:
 Configure the stylesheet via the $site_html_head_string variable:
 
   # HTML snippet to be included in the <head> section of each page
-  $site_html_head_string = '<link rel="stylesheet" type="text/css" href="static/gl/activities.css"/>';
+  $site_html_head_string = '<link rel="stylesheet" type="text/css" href="static/gl-activities/activities.css"/>';
 
 Make sure webserver is able to serve the stylesheet file from the
 configured location.
@@ -59,7 +59,7 @@ Nginx configuration
 -------------------
 
 Set up a location that allows the javascript library activities.js to
-be accessed via url "/javascript/gl/activities.js". Same for the jQuery
+be accessed via url "/javascript/gl-activities/activities.js". Same for the jQuery
 library.
 
 Set up a location that allows the CGI program to be run via url

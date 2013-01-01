@@ -22,7 +22,7 @@ fi
 # ------------------------------------------------------------------
 # read configurable options
 [ -f /etc/gitolite-activities.conf ] && . /etc/gitolite-activities.conf
-[ -z "$LOG_FILE" ] && LOG_FILE=/var/log/gl/activities.log
+[ -z "$LOG_FILE" ] && LOG_FILE=/var/log/gitolite/activities.log
 [ -z "$MIN_COUNT" ] && MIN_COUNT=7
 [ -z "$MAX_COUNT" ] && MAX_COUNT=100
 [ -z "$QUERY_INTERVAL" ] && QUERY_INTERVAL=10000

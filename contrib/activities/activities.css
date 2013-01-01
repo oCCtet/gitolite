@@ -39,16 +39,12 @@
 }
 
 .gl-time {
+    font-style : normal;
     font-size : 80%;
-    padding-top : 9px;
+    color : gray;
 }
 
 .gl-user {
-    font-style : italic;
-}
-
-.gl-ref {
-    font-family : "Lucida Console", Monaco, monospace;
     font-style : normal;
 }
 
@@ -58,6 +54,6 @@
 }
 
 #gl-activities-listing a:hover, #gl-activities-listing a:active {
-    text-decoration : none;
+    text-decoration : underline;
     color : #880000;
 }

@@ -12,18 +12,18 @@ package.
 Activities javascript, stylesheet and CGI program
 -------------------------------------------------
 
-Create a symlink pointing to the location of the activities.js library so that
+Create a symlink pointing to the location of the javascript library so that
 the result is as follows:
 
 $ ll /usr/share/javascript/
-lrwxrwxrwx   1 root root   58 Dec  8 15:41 gl -> /opt/gitolite/contrib/activities/
+lrwxrwxrwx   1 root root   58 Dec  8 15:41 gl-activities -> /opt/gitolite/contrib/activities/
 drwxr-xr-x   2 root root 4096 Dec  6 16:09 jquery/
 
 Similarly for the stylesheet:
 
 $ ll /usr/share/gitweb/static/
 -rw-r--r-- 1 root root 10397 Apr 11  2012 gitweb.css
-lrwxrwxrwx 1 root root    58 Dec 12 22:21 gl -> /opt/gitolite/contrib/activities/
+lrwxrwxrwx 1 root root    58 Dec 12 22:21 gl-activities -> /opt/gitolite/contrib/activities/
 
 And for the CGI program:
 

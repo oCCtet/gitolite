@@ -11,23 +11,20 @@ parts:
  * Web page HTML snippet, CGI program and javascript library to read
    the log and render it on a web page (most recent actions first)
 
-This was done because the "last change" column in gitweb is not quite
-enough; it does not tell _what_ the last action was, or _who_ did it.
-
 Configuration
 -------------
 
-The gitolite trigger has one option to set in $GL_BASE_DIR/.gitolite.rc
+The gitolite trigger has one option to set in ~/.gitolite.rc
 file, in the %RC section:
 
-    ACTIVITIES_LOG_FILE  =>  '/var/log/gl/activities.log',
+    ACTIVITIES_LOG_FILE  =>  '/var/log/gitolite/activities.log',
 
 The CGI server-side program understands the following options in the
 optional /etc/gitolite-activities.conf file (defaults shown below):
 
     # log file; sync with the gitolite activities trigger
     # configuration option ACTIVITIES_LOG_FILE
-    LOG_FILE=/var/log/gl/activities.log
+    LOG_FILE=/var/log/gitolite/activities.log
 
     # initial number of log entries to show
     MIN_COUNT=7
