@@ -11,12 +11,21 @@
     font-size : 100%;
     font-weight : bold;
     margin-top : 0px;
-    letter-spacing : 2px;
 }
 
 #gl-activities-listing {
-    border-style : none;
-    border-collapse : collapse;
+    list-style-type : none;
+    padding-left : 0px;
+}
+
+#gl-activities-listing li {
+    padding-left : 1em;
+    line-height : 3;
+}
+
+#gl-showall {
+    display : none;
+    /* class is set to 'rss_logo' which is defined in gitweb.css */
 }
 
 .gl-noact {
@@ -25,27 +34,18 @@
     background-color : white;
 }
 
-#gl-showall {
-    display : none;
-    /* class is set to 'rss_logo' which is defined in gitweb.css */
-}
-
-.gl-dark {
-    background-color : #f6f6f0;
-}
-
-#gl-activities-listing td {
-    padding : 7px;
+.gl-sep {
+    border-top: 1px solid #f6f6f0;
 }
 
 .gl-time {
     font-style : normal;
-    font-size : 80%;
+    font-size : 75%;
     color : gray;
 }
 
 .gl-user {
-    font-style : normal;
+    font-style : italic;
 }
 
 #gl-activities-listing a:link, #gl-activities-listing a:visited {

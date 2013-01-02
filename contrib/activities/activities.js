@@ -2,7 +2,7 @@
 // uses the jQuery javascript library
 
 // Get the activities JSON document from the server and render
-// it to the table with id 'gl-activities-listing', refreshing
+// it to the element with id 'gl-activities-listing', refreshing
 // the web part periodically.
 
 var aMinute    = 60000;      // 1000 * 60
@@ -142,7 +142,7 @@ function updateActivity()
 		act = 'did something unexpected (<i>internal error</i>)';
 	    }
 
-	    items.push("<tr><td>" + user + act + ts + "</td></tr>");
+	    items.push("<li>" + user + act + ts + "</li>");
 	});
 
 	items.reverse();
@@ -153,7 +153,9 @@ function updateActivity()
 	    return items.join('');
 	});
 
-	$("#gl-activities tr").filter(":even").addClass("gl-dark");
+	$("#gl-activities li").filter(function(index) {
+	    return index > 0;
+	}).addClass("gl-sep");
     });
 }
 
