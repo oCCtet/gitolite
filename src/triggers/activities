@@ -61,7 +61,7 @@ fi
 echo "\"$GL_TID\" : {" \
     " \"timestamp\" : \"$ts\"," \
     " \"action\"    : \"$l_action\"," \
-    " \"repo\"      : \"$l_repo.git\"," \
+    " \"repo\"      : \"$l_repo\"," \
     " \"user\"      : \"$l_user\"," \
     " \"ref\"       : \"$l_ref\"," \
     " \"oldSha\"    : \"$l_old\"," \
