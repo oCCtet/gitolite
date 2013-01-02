@@ -18,14 +18,14 @@ var url = "/cgi-bin/activities.cgi";
 
 // The CGI program may override the min/max/interval
 // values when requested for the options, so these
-// are only fallbacks.
+// are only initial/fallback values.
 
-var condensed     = 7;
-var expanded      = 100;
-var activityCount = condensed;
+var nMin       = 7;
+var nMax       = 100;
+var nSel       = nMin;
 
 var interval   = 10000;  // in milliseconds
-var intervalId;          // undefined to begin with
+var intervalId;          // start as undefined
 
 function toWhenString(timestamp)
 {
@@ -86,28 +86,28 @@ function pushKind(oldSha, newSha)
 
 function getOptions()
 {
-    $.getJSON(url, { a : "opt" }, function(data) {
+    var jqxhr = $.getJSON(url, { a : "opt" }, function(data) {
 	$.each(data, function(key, val) {
 	    switch(key) {
 	    case "min":
-		condensed = val;
+		nMin = nSel = val;
 		break;
 	    case "max":
-		expanded = val;
+		nMax = val;
 		break;
 	    case "interval":
 		interval = val;
 		break;
 	    }
 	});
-
-	activityCount = condensed;  // reset to start small
     });
+
+    return jqxhr;
 }
 
 function updateActivity()
 {
-    $.getJSON(url, { a : "log", n : activityCount }, function(data) {
+    $.getJSON(url, { a : "log", n : nSel }, function(data) {
 	var items = [];
 	var ts, user, act, pt1, pt2;
 
@@ -161,9 +161,9 @@ function updateActivity()
 
 function toggleActivityCount()
 {
-    activityCount = (activityCount === condensed ? expanded : condensed);
+    nSel = (nSel === nMin ? nMax : nMin);
 
-    if (activityCount == condensed) {
+    if (nSel == nMin) {
 	$("#gl-showall").text("more").attr("title", "show more events");
     } else {
 	$("#gl-showall").text("less").attr("title", "show less events");
@@ -195,7 +195,6 @@ function activities()
     });
 
     if (intervalId === undefined) {
-	getOptions();
-	startActivityUpdate();
+	getOptions().then(startActivityUpdate);
     }
 }
