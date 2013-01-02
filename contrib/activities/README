@@ -36,6 +36,12 @@ optional /etc/gitolite-activities.conf file (defaults shown below):
     # query interval for page refreshes in milliseconds
     QUERY_INTERVAL=10000
 
+JavaScript minimizer
+--------------------
+
+Google Closure Compiler service at http://closure-compiler.appspot.com/home
+was used to generate the activities.min.js file.
+
 License
 -------
 

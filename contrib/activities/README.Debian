@@ -63,4 +63,4 @@ Logrotate
 Copy the gl-activities.logrotate to /etc/logrotate.d/gl-activities
 and modify the log file path to match your setup.
 
- -- Sami Hartikainen <sami.a.hartikainen@gmail.com>  Thu, 20 Dec 2012 20:41:10 +0200
+ -- Sami Hartikainen <sami.a.hartikainen@gmail.com>  Wed, 02 Jan 2013 03:02:10 +0200

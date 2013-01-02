@@ -6,8 +6,8 @@ with one entry is formally defined as:
 {
     "<id number>" : {
         "timestamp" : "<seconds since 1970-01-01T00:00:00.000Z>",
-        "action"    : "<push | fork | create>",
-        "repo"      : "<path/to/repo.git>",
+        "action"    : "push | fork | create",
+        "repo"      : "<path/to/repo>.git",
         "user"      : "<username>",
         "ref"       : "<branchname | refs/tags/tagname>",
         "oldSha"    : "<old SHA1, 40 hex chars>"

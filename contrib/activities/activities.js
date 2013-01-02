@@ -1,4 +1,4 @@
-// gl-activities javascript (C) 2012 Sami Hartikainen <sami.a.hartikainen@gmail.com>
+// gl-activities javascript (C) 2013 Sami Hartikainen <sami.a.hartikainen@gmail.com>
 // uses the jQuery javascript library
 
 // Get the activities JSON document from the server and render
