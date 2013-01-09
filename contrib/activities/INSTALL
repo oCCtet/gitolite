@@ -47,10 +47,9 @@ gitweb configuration variable:
   # html text to include at home page
   $home_text = "/opt/gitolite/contrib/activities/webpart.html";
 
-Configure the stylesheet via the $site_html_head_string variable:
+Configure the stylesheet:
 
-  # HTML snippet to be included in the <head> section of each page
-  $site_html_head_string = '<link rel="stylesheet" type="text/css" href="static/gl-activities/activities.css"/>';
+  push @stylesheets, "static/gl-activities/activities.css";
 
 Make sure webserver is able to serve the stylesheet file from the
 configured location.
