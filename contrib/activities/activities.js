@@ -117,24 +117,24 @@ function updateActivity()
 
 	    switch (item.action) {
 	    case "fork":
-		act = 'forked a new repo <a href="/?p=' + item.repo + '.git">' + item.repo + '</a>';
+		act = 'forked a new repo <a href="?p=' + item.repo + '.git">' + item.repo + '</a>';
 		break;
 	    case "create":
-		act = 'created a new repo <a href="/?p=' + item.repo + '.git">' + item.repo + '</a>';
+		act = 'created a new repo <a href="?p=' + item.repo + '.git">' + item.repo + '</a>';
 		break;
 	    case "push":
 		switch(pushKind(item.oldSha, item.newSha)) {
 		case 1:
 		    pt1 = 'created ' + toRefString(item.ref, false) + ' at ';
-		    pt2 = '<a href="/?p=' + item.repo + '.git;h=' + item.newSha + '">' + item.repo + '</a>';
+		    pt2 = '<a href="?p=' + item.repo + '.git;h=' + item.newSha + '">' + item.repo + '</a>';
 		    break;
 		case 2:
 		    pt1 = 'deleted ' + toRefString(item.ref, false) + ' at ';
-		    pt2 = '<a href="/?p=' + item.repo + '.git">' + item.repo + '</a>';
+		    pt2 = '<a href="?p=' + item.repo + '.git">' + item.repo + '</a>';
 		    break;
 		default:
 		    pt1 = 'pushed to ' + toRefString(item.ref, true) + ' at ';
-		    pt2 = '<a href="/?p=' + item.repo + '.git;h=' + item.newSha + '">' + item.repo + '</a>';
+		    pt2 = '<a href="?p=' + item.repo + '.git;h=' + item.newSha + '">' + item.repo + '</a>';
 		}
 		act = pt1.concat(pt2);
 		break;
