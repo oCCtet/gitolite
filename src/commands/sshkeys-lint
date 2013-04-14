@@ -60,7 +60,7 @@ if ($admin) {
     die "\t\t*** FATAL ***\n" .
         "$admin.pub maps to $fpu, not $admin.\n" .
         "You will not be able to access gitolite with this key.\n" .
-        "Look for the 'ssh troubleshooting' link in http://sitaramc.github.com/gitolite/.\n"
+        "Look for the 'ssh troubleshooting' link in http://gitolite.com/gitolite/ssh.html.\n"
     if $fpu ne "user $admin";
     #>>>
 }
@@ -142,10 +142,10 @@ sub ak_comment {
 sub fprint {
     local $_ = shift;
     my ( $fh, $tempfn, $in );
-    if (/ssh-(dss|rsa) /) {
+    if ( /ssh-(dss|rsa) / || /ecdsa-/ ) {
         # an actual key was passed.  Since ssh-keygen requires an actual file,
         # make a temp file to take the data and pass on to ssh-keygen
-        s/^.* (ssh-dss|ssh-rsa)/$1/;
+        s/^.* (ssh-dss|ssh-rsa|ecdsa-\S+)/$1/;
         use File::Temp qw(tempfile);
         ( $fh, $tempfn ) = tempfile();
         $in = $tempfn;

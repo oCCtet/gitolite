@@ -15,7 +15,7 @@ This file contains BASIC DOCUMENTATION ONLY.
 
 The COMPLETE DOCUMENTATION is at:
 
-    http://sitaramc.github.com/gitolite/master-toc.html
+    http://gitolite.com/gitolite/master-toc.html
 
 Please go there for what/why/how, concepts, background, troubleshooting, more
 details on what is covered here, or advanced features not covered here.
@@ -287,9 +287,9 @@ GIT-CONFIG
 
     **WARNING**
 
-        The last syntax shown above is the *only* way to *delete* a config
-        variable once you have added it.  Merely removing it from the conf
-        file will *not* delete it from the repo.git/config file.
+        The last two syntaxes shown above are the *only* way to *delete*
+        a config variable once you have added it.  Merely removing it from
+        the conf file will *not* delete it from the repo.git/config file.
 
     **SECURITY NOTE**
 
