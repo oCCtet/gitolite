@@ -25,7 +25,15 @@ Gitolite configuration
 Modify the ~/.gitolite.rc configuration file:
 
  * enable activity logging by adding the 'activities' program into
-   the ACCESS_2 and POST_CREATE trigger hashes
+   the ACCESS_2 and POST_CREATE trigger hashes:
+
+       ACCESS_2 => [
+           'activities'
+       ],
+
+       POST_CREATE => [
+           'activities'
+       ],
 
  * set ACTIVITIES_LOG_FILE option to contain a path to the log file;
    the directory must exist and be writable by the 'gitolite user',
