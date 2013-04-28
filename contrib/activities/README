@@ -24,17 +24,17 @@ optional /etc/gitolite-activities.conf file (defaults shown below):
 
     # log file; sync with the gitolite activities trigger
     # configuration option ACTIVITIES_LOG_FILE
-    LOG_FILE=/var/log/gitolite/activities.log
+    $log_file = "/var/log/gitolite/activities.log";
 
     # initial number of log entries to show
-    MIN_COUNT=7
+    $min_count = 7;
 
     # alternate, larger amount of log entries to show; user
     # can toggle between these two views
-    MAX_COUNT=100
+    $max_count = 100;
 
     # query interval for page refreshes in milliseconds
-    QUERY_INTERVAL=10000
+    $query_interval = 10000;
 
 JavaScript minimizer
 --------------------

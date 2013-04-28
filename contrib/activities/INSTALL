@@ -42,7 +42,7 @@ Modify the ~/.gitolite.rc configuration file:
 CGI program configuration
 -------------------------
 
-Synchronize the log file path option LOG_FILE in the CGI program's
+Synchronize the log file path option $log_file in the CGI program's
 configuration file /etc/gitolite-activities.conf to match that of
 gitolite's ACTIVITIES_LOG_FILE option.
 

@@ -145,8 +145,6 @@ function updateActivity()
 	    items.push("<li>" + user + act + ts + "</li>");
 	});
 
-	items.reverse();
-
 	$("#gl-title").filter(":hidden").css("display", "block");
 	$("#gl-showall").filter(":hidden").css("display", "block");
 	$("#gl-activities-listing").html(function() {
