@@ -40,22 +40,42 @@ Assuming gitweb is configured as follows:
 
     location / {
         index /cgi-bin/gitweb.cgi;
+    #    auth_basic "My Gitweb";
+    #    auth_basic_user_file htpasswd;
     }
 
 Then static files, like the stylesheet, should be configured thusly:
 
-  location /static {
-      alias /usr/share/gitweb/static;
-      access_log off;
-  }
+    location /static {
+        alias /usr/share/gitweb/static;
+        access_log off;
+    }
 
 To provide access to the javascript libraries, the following location
 block will suffice:
 
-  location /javascript {
-      alias /usr/share/javascript;
-      access_log off;
-  }
+    location /javascript {
+        alias /usr/share/javascript;
+        access_log off;
+    }
+
+The CGI program requires the following block (note how the HTTP Basic
+Authentication realm, if any, must match the one used for gitweb):
+
+    location /gitolite-activities {
+        index /cgi-bin/activities.cgi;
+    #    auth_basic "My Gitweb";
+    #    auth_basic_user_file htpasswd;
+    }
+
+FastCGI parameter file /etc/nginx/fastcgi_params may be missing the
+following line:
+
+    # For authenticated connections
+    fastcgi_param  REMOTE_USER              $remote_user;
+
+Add the above lines to enable per-repo authentication mechanism, described
+in http://gitolite.com/gitolite/gitweb.conf.html, to work properly.
 
 Logrotate
 ---------

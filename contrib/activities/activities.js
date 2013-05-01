@@ -14,7 +14,7 @@ var twoDays    = 172800000;  // aDay * 2
 var aWeek      = 604800000;  // aDay * 7
 var twoWeeks   = 1209600000; // aWeek * 2
 
-var url = "/cgi-bin/activities.cgi";
+var url = "/gitolite-activities/";
 
 // The CGI program may override the min/max/interval
 // values when requested for the options, so these

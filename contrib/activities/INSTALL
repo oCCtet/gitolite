@@ -73,7 +73,7 @@ via url "/javascript/gl-activities/activities.min.js". Same for the
 jQuery library.
 
 Set up a location that allows the CGI program to be run via url
-"/cgin-bin/activities.cgi".
+"/gitolite-activities/".
 
 Logrotate
 ---------
