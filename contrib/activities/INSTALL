@@ -46,6 +46,9 @@ Synchronize the log file path option $log_file in the CGI program's
 configuration file /etc/gitolite-activities.conf to match that of
 gitolite's ACTIVITIES_LOG_FILE option.
 
+Optionally set other options such as authorization hook; see the
+example file gitolite-activities.conf.sample.
+
 Gitweb configuration
 --------------------
 

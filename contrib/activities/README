@@ -19,22 +19,9 @@ file, in the %RC section:
 
     ACTIVITIES_LOG_FILE  =>  '/var/log/gitolite/activities.log',
 
-The CGI server-side program understands the following options in the
-optional /etc/gitolite-activities.conf file (defaults shown below):
-
-    # log file; sync with the gitolite activities trigger
-    # configuration option ACTIVITIES_LOG_FILE
-    $log_file = "/var/log/gitolite/activities.log";
-
-    # initial number of log entries to show
-    $min_count = 7;
-
-    # alternate, larger amount of log entries to show; user
-    # can toggle between these two views
-    $max_count = 100;
-
-    # query interval for page refreshes in milliseconds
-    $query_interval = 10000;
+The CGI server-side program understands several options in the
+(optional) /etc/gitolite-activities.conf file. See the example
+file gitolite-activities.conf.sample for details.
 
 JavaScript minimizer
 --------------------

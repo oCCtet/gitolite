@@ -1,0 +1,45 @@
+# /etc/gitolite-activities.conf
+
+# Configuration for the gitolite activities CGI program. Per-repo
+# authorization code was inspired by http://gitolite.com/gitolite/gitweb.conf.html
+
+# First, run 'gitolite query-rc -a' (as the gitolite hosting user) to find the
+# values for GL_BINDIR and GL_LIBDIR in your installation.  Then use those
+# values in the code below:
+BEGIN {
+    $ENV{HOME} = "/home/git";   # or whatever is the hosting user's $HOME
+    $ENV{GL_BINDIR} = "/opt/gitolite/src";
+    $ENV{GL_LIBDIR} = "/opt/gitolite/src/lib";
+}
+
+# Pull in gitolite's perl API module. Among other things,
+# this also sets the GL_REPO_BASE environment variable.
+use lib $ENV{GL_LIBDIR};
+use Gitolite::Easy;
+
+# Get user name for can_read(); unauthenticated clients will be deemed to be
+# the 'gitweb' user so make sure gitolite's conf file does not allow that user
+# to see anything sensitive.
+$ENV{GL_USER} = $ENV{REMOTE_USER} || "gitweb";
+
+$repo_auth_hook = sub {
+    my $repo = shift;
+    # gitolite-activities passes us the repo path as it is specified in
+    # gitolite conf; we can pass it as-is to gitolite API functions
+    # call Easy.pm's 'can_read' function
+    return can_read($repo);
+};
+
+# log file; sync the path with gitolite activities trigger
+# configuration option ACTIVITIES_LOG_DIR
+$log_file = "/var/log/gitolite/activities.log";
+
+# initial number of log entries to show
+$min_count = 7;
+
+# alternate, larger amount of log entries to show; user
+# can toggle between these views
+$max_count = 100;
+
+# query interval for page refreshes in milliseconds
+$query_interval = 10000;
