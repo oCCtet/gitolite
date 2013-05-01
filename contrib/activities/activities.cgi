@@ -81,6 +81,14 @@ EOF
 exit;
 }
 
+sub forbidden { print <<EOF;
+Status: 403 Forbidden
+
+Accessing log file: $!
+EOF
+exit;
+}
+
 sub not_implemented { print <<EOF;
 Status: 501 Not Implemented
 
@@ -131,26 +139,15 @@ my $last_modified = `date --rfc-2822 --date=\@$log_timestamp`;
 
 # -----------------------------------------------------
 
-# Construct the full response, containing the latest
-# 'n' activity entries that are authorized to be seen
-# by the user.
-print <<EOF;
-Status: 200 OK
-Cache-Control: no-cache
-Content-type : application/json; charset=utf-8
-Last-Modified: $last_modified
-
-EOF
-
 # Read the log file entirely in memory, reversing line
 # order.
-open(my $in, "<", $log_file) or die "Failed to open log: $!";
+open(my $in, "<", $log_file) or forbidden();
 
 my @lines = reverse <$in>;
 my @result;
 my $count = 0;
 
-close($in) or die "$in: $!";
+close($in) or warn "$in: $!";
 
 # For authorized repos, replace transaction id with a line
 # number (several entries may have the same tid which is
@@ -164,6 +161,12 @@ foreach my $line (@lines) {
     $result[$count - 1] = $line;
 }
 
-# Put the rest of the json document bits in place (curly
-# braces and commas) and output the document.
+# Output the full response.
+print <<EOF;
+Status: 200 OK
+Cache-Control: no-cache
+Content-type : application/json; charset=utf-8
+Last-Modified: $last_modified
+
+EOF
 print "{ " . join(', ', @result) . "}\n";
