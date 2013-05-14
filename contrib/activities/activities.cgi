@@ -108,6 +108,19 @@ EOF
 exit;
 }
 
+sub send_userinf {
+    my $valid_user = $ENV{REMOTE_USER} ne '' ? 'true' : 'false';
+    my $auth_user  = $ENV{REMOTE_USER} || "(unauthenticated)";
+    print <<EOF;
+Status: 200 OK
+Cache-Control: private
+Content-type : application/json; charset=utf-8
+
+{ "is_valid_user" : $valid_user, "username" : "$auth_user" }
+EOF
+exit;
+}
+
 # -----------------------------------------------------
 
 # Parse CGI input, supporting only the GET method and
@@ -116,9 +129,10 @@ bad_request()     unless defined $ENV{QUERY_STRING};
 bad_request()     unless defined $ENV{REQUEST_METHOD};
 not_implemented() unless $ENV{REQUEST_METHOD} eq "GET";
 
-my ($action) = ($ENV{QUERY_STRING} =~ /\ba=(log|opt)\b/a);
+my ($action) = ($ENV{QUERY_STRING} =~ /\ba=(log|opt|user)\b/a);
 bad_request()  unless defined $action;
 send_options() if $action eq "opt";
+send_userinf() if $action eq "user";
 
 # Verify $log_file exists and is non-empty. Also fills
 # the stat(_) data for subsequent use.

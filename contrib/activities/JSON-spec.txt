@@ -24,3 +24,10 @@ The option response definition:
     "max"      : "<maximum number of log entries to show>",
     "interval" : "<web part refresh interval in milliseconds>"
 }
+
+User-info response definition:
+
+{
+    "is_valid_user" : true | false,
+    "username"      : "authenticated username"
+}
