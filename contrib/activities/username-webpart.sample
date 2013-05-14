@@ -1,0 +1,24 @@
+<!-- Display 'Logged in as <username>' if authentication info -->
+<!-- can be read from the activities CGI program. Can be used -->
+<!-- as the gitweb's header webpart.                          -->
+<script type="text/javascript" src="/javascript/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $.getJSON("/gitolite-activities/", { a : "user" }, function(data) {
+        var auth_ok = false;
+        var username;
+        $.each(data, function(key, val) {
+            switch(key) {
+            case "is_valid_user": auth_ok  = val; break;
+            case "username":      username = val; break;
+            }
+        });
+        if (auth_ok) {
+            $("#gl-loggedin").html(function() {
+                return "Logged in as " + username;
+            });
+        }
+    });
+});
+</script>
+<p id="gl-loggedin">Not logged in</p>
