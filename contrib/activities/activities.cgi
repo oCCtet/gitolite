@@ -101,7 +101,7 @@ exit;
 sub send_options { print <<EOF;
 Status: 200 OK
 Cache-Control: max-age=3600
-Content-type : application/json; charset=utf-8
+Content-Type : application/json; charset=utf-8
 
 { "min" : "$min_count", "max" : "$max_count", "interval" : "$query_interval" }
 EOF
@@ -113,8 +113,8 @@ sub send_userinf {
     my $auth_user  = $ENV{REMOTE_USER} || "(unauthenticated)";
     print <<EOF;
 Status: 200 OK
-Cache-Control: private
-Content-type : application/json; charset=utf-8
+Cache-Control: public, no-cache
+Content-Type : application/json; charset=utf-8
 
 { "is_valid_user" : $valid_user, "username" : "$auth_user" }
 EOF
@@ -179,7 +179,7 @@ foreach my $line (@lines) {
 print <<EOF;
 Status: 200 OK
 Cache-Control: no-cache
-Content-type : application/json; charset=utf-8
+Content-Type : application/json; charset=utf-8
 Last-Modified: $last_modified
 
 EOF

@@ -15,10 +15,10 @@ $(document).ready(function() {
         });
         if (auth_ok) {
             $("#gl-loggedin").html(function() {
-                return "Logged in as " + username;
+                return username;
             });
         }
     });
 });
 </script>
-<p id="gl-loggedin">Not logged in</p>
+<p>Logged in as <text id="gl-loggedin">--------</text></p>
