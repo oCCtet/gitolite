@@ -20,6 +20,9 @@ Show, remove or set the README.html file for repo.
 You need to have write access to the repo and the 'writer-is-owner' option
 must be set for the repo, or it must be a user-created ('wild') repo and you
 must be the owner.
+
+Setting the README.html with this command overrides auto-generation from
+README.md documents in repo content.
 =cut
 
 usage() if not @ARGV or @ARGV < 1 or $ARGV[0] eq '-h';
@@ -28,6 +31,7 @@ my $repo = shift;
 my $op = shift || '';
 usage() if $op and $op ne 'rm' and $op ne 'set';
 my $file = 'README.html';
+my $flag = 'README.override';
 
 #<<<
 _die "you are not authorized" unless
@@ -38,8 +42,10 @@ _die "you are not authorized" unless
 
 if ( $op eq 'rm' ) {
     unlink "$rc{GL_REPO_BASE}/$repo.git/$file";
+    unlink "$rc{GL_REPO_BASE}/$repo.git/$flag";
 } elsif ( $op eq 'set' ) {
     textfile( file => $file, repo => $repo, prompt => '' );
+    textfile( file => $flag, repo => $repo, text   => 'disable auto-generation' );
 } else {
     print textfile( file => $file, repo => $repo );
 }
